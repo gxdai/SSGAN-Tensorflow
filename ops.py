@@ -8,9 +8,9 @@ def lrelu(x, leak=0.2, name="lrelu"):
         return f1 * x + f2 * abs(x)
 
 def huber_loss(labels, predictions, delta=1.0):
-    residual = tf.abs(predictions - labels)
-    condition = tf.less(residual, delta)
-    small_res = 0.5 * tf.square(residual)
+    residual = tf.abs(predictions - labels) # The difference between pred and label
+    condition = tf.less(residual, delta)    # margin of difference
+    small_res = 0.5 * tf.square(residual)   #
     large_res = delta * residual - 0.5 * tf.square(delta)
     return tf.where(condition, small_res, large_res)
 
@@ -22,7 +22,7 @@ def conv2d(input, output_shape, is_train, k_h=5, k_w=5, stddev=0.02, name="conv2
 
         biases = tf.get_variable('biases', [output_shape], initializer=tf.constant_initializer(0.0))
         conv = lrelu(tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape()))
-        bn = tf.contrib.layers.batch_norm(conv, center=True, scale=True, 
+        bn = tf.contrib.layers.batch_norm(conv, center=True, scale=True,
             decay=0.9, is_training=is_train, updates_collections=None)
     return bn
 
@@ -38,7 +38,7 @@ def deconv2d(input, deconv_info, is_train, name="deconv2d", stddev=0.02,activati
             kernel_size=[k, k], stride=[s, s], padding='VALID')
         if activation_fn == 'relu':
             deconv = tf.nn.relu(deconv)
-            bn = tf.contrib.layers.batch_norm(deconv, center=True, scale=True, 
+            bn = tf.contrib.layers.batch_norm(deconv, center=True, scale=True,
                 decay=0.9, is_training=is_train, updates_collections=None)
         elif activation_fn == 'tanh':
             deconv = tf.nn.tanh(deconv)

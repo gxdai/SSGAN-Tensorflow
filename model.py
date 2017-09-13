@@ -71,7 +71,7 @@ class Model(object):
         def build_loss(d_real, d_real_logits, d_fake, d_fake_logits, label, real_image, fake_image):
             alpha = 0.9
             real_label = tf.concat([label, tf.zeros([self.batch_size, 1])], axis=1)
-            fake_label = tf.concat([(1-alpha)*tf.ones([self.batch_size, n])/n, alpha*tf.ones([self.batch_size, 1])], axis=1)
+            fake_label = tf.concat([(1-alpha)*tf.ones([self.batch_size, n])/n, alpha*tf.ones([self.batch_size, 1])], axis=1)   # one side label
 
             # Discriminator/classifier loss
             s_loss = tf.reduce_mean(huber_loss(label, d_real[:, :-1]))
@@ -98,7 +98,7 @@ class Model(object):
             with tf.variable_scope(scope) as scope:
                 print ('\033[93m'+scope.name+'\033[0m')
                 z = tf.reshape(z, [self.batch_size, 1, 1, -1])
-                g_1 = deconv2d(z, deconv_info[0], is_train, name='g_1_deconv') 
+                g_1 = deconv2d(z, deconv_info[0], is_train, name='g_1_deconv')
                 print (scope.name, g_1)
                 g_2 = deconv2d(g_1, deconv_info[1], is_train, name='g_2_deconv')
                 print (scope.name, g_2)
